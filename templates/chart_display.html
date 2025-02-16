@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Growth Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <h1>Investment Growth Chart</h1>
+
+    <button class="top-right-button" onclick="goBack()">Back to Investment Details</button>
+
+    <div class="chart-container">
+        <canvas id="chartCanvas"></canvas>
+    </div>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+
+        let chartInstance = null; // Store the chart instance globally
+
+        function renderChart() {
+            const chartData = {{ session['chart_data'] | tojson | safe }};
+            const ctx = document.getElementById('chartCanvas').getContext('2d');
+
+            // Destroy previous chart instance if it exists
+            if (chartInstance !== null) {
+                chartInstance.destroy();
+            }
+
+            // Create a new chart instance
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,  // Keeps aspect ratio stable
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Years', color: '#e0e0e0' },
+                            ticks: { color: '#e0e0e0' }, /* Bright X-axis labels */
+                            grid: { color: 'rgba(255, 255, 255, 0.2)' } /* Brighter grid */
+                        },
+                        y: {
+                            title: { display: true, text: 'Amount', color: '#e0e0e0' },
+                            ticks: {
+                                color: '#e0e0e0',
+                                callback: function(value) {
+                                    if (value >= 1000000) {
+                                        return (value / 1000000).toFixed(1) + 'M';
+                                    } else if (value >= 1000) {
+                                        return (value / 1000).toFixed(1) + 'K';
+                                    }
+                                    return value;
+                                }
+                            },
+                            grid: { color: 'rgba(255, 255, 255, 0.2)' } /* Brighter grid */
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#e0e0e0' } } // Light text for legend
+                    }
+                }
+            });
+        }
+
+        // Render the chart only once after page load
+        window.addEventListener('load', renderChart);
+    </script>
+</body>
+</html>

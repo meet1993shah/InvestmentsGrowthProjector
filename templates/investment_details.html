@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Growth Details</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <h1>Investment Growth Projector - Enter Investment Details</h1>
+
+    <button class="top-right-button" onclick="goBack()">Back to Home</button>
+
+    <form id="investmentForm">
+        <input type="hidden" name="chart_count" value="{{ chart_count }}">
+
+        <div id="investment_inputs">
+            {% for i in range(chart_count) %}
+                <h3>Investment {{ i + 1 }}</h3>
+                <label for="initial_amount_{{ i }}">Initial Amount:</label>
+                <input type="number" id="initial_amount_{{ i }}" name="initial_amount_{{ i }}" required>
+                <br><br>
+                <label for="rate_{{ i }}">Rate (%):</label>
+                <input type="number" id="rate_{{ i }}" name="rate_{{ i }}" step="any" required>
+                <br><br>
+                <label for="savings_{{ i }}">Recurring Savings:</label>
+                <input type="number" id="savings_{{ i }}" name="savings_{{ i }}" required>
+                <br><br>
+            {% endfor %}
+        </div>
+
+        <label for="years">Number of Years:</label>
+        <input type="number" id="years" name="years" required>
+        <br><br>
+
+        <button type="submit">Generate Projection</button>
+    </form>
+
+    <script>
+        function goBack() {
+            window.location.href = "{{ url_for('index') }}";
+        }
+    </script>
+
+</body>
+</html>
